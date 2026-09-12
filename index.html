@@ -26,15 +26,18 @@ footer{padding:45px 0;background:#21150f;color:#eee1d4}.footer-grid{display:flex
 @media(max-width:800px){.navlinks{display:none}.hero-grid,.celebrate,.story{grid-template-columns:1fr}.hero{padding-top:45px}.features,.products{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.celebrate{padding:28px}}
 @media(max-width:520px){.features,.products,.steps{grid-template-columns:1fr}.hero h1{font-size:48px}.contact{padding:28px 18px}}
 
-.product-slider-wrap{display:flex;align-items:center;gap:12px;margin-top:28px}
-.product-slider-viewport{overflow:hidden;flex:1;border-radius:26px}
-.product-slider{display:flex!important;flex-wrap:nowrap!important;gap:0!important;transition:transform .45s ease}
-.product-slider .product{flex:0 0 100%;min-width:100%}
-.slider-btn{width:48px;height:48px;min-width:48px;border:0;border-radius:50%;background:var(--paper);box-shadow:0 8px 25px #0002;font-size:34px;cursor:pointer;z-index:2}
-.slider-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
-.slider-dot{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:#cfc7bb;cursor:pointer}
-.slider-dot.active{width:24px;border-radius:10px;background:var(--brown)}
-@media(max-width:520px){.product-slider-wrap{gap:6px}.slider-btn{width:40px;height:40px;min-width:40px;font-size:28px}}
+/* Individual image slider inside every product card */
+.product-gallery{position:relative;height:340px;background:#f4e9d8;overflow:hidden}
+.gallery-track{width:100%;height:100%;position:relative}
+.gallery-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;visibility:hidden;transition:opacity .35s ease;user-select:none}
+.gallery-image.active{opacity:1;visibility:visible}
+.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:0 5px 16px rgba(0,0,0,.14);font-size:30px;line-height:1;cursor:pointer;z-index:3}
+.gallery-arrow:hover{transform:translateY(-50%) scale(1.06)}
+.gallery-prev{left:12px}.gallery-next{right:12px}
+.gallery-dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px;z-index:4}
+.gallery-dot{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:rgba(80,60,45,.35);cursor:pointer}
+.gallery-dot.active{width:20px;border-radius:8px;background:var(--brown)}
+@media(max-width:520px){.product-gallery{height:300px}.gallery-arrow{width:36px;height:36px;font-size:26px}}
 
 </style>
 </head>
@@ -51,7 +54,7 @@ footer{padding:45px 0;background:#21150f;color:#eee1d4}.footer-grid{display:flex
 <p>Crunchy, flavourful and thoughtfully crafted — discover MeeSaan for everyday snacking, gifting and celebrations.</p>
 <div class="actions"><a class="btn primary" href="#products">Shop Products</a><a class="btn outline" href="#celebration">Explore Celebration Pack</a></div>
 <p style="font-size:13px">₹180 onwards • 5 delicious flavours • WhatsApp ordering</p></div>
-<div class="hero-card"><img src="https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/hero.png" alt="MeeSaan premium makhana"></div>
+<div class="hero-card"><img src="assets/hero.png" alt="MeeSaan premium makhana"></div>
 </div></section>
 <div class="strip">ROASTED IN OLIVE OIL &nbsp; • &nbsp; GLUTEN FREE &nbsp; • &nbsp; PLANT PROTEIN &nbsp; • &nbsp; PREMIUM QUALITY</div>
 
@@ -66,20 +69,13 @@ footer{padding:45px 0;background:#21150f;color:#eee1d4}.footer-grid{display:flex
 </div></div></section>
 
 <section id="products"><div class="container"><div class="section-head"><div class="eyebrow">Shop MeeSaan</div><h2>Find Your Perfect Crunch</h2><p>Five irresistible flavours. One premium makhana experience.</p></div>
-<div class="product-slider-wrap">
-  <button class="slider-btn" type="button" aria-label="Previous product" onclick="moveProduct(-1)">‹</button>
-  <div class="product-slider-viewport">
-    <div class="products product-slider" id="productGrid"></div>
-  </div>
-  <button class="slider-btn" type="button" aria-label="Next product" onclick="moveProduct(1)">›</button>
-</div>
-<div class="slider-dots" id="productDots"></div></div></section>
+<div class="products" id="productGrid"></div></div></section>
 
 <section id="celebration"><div class="container"><div class="celebrate">
 <div><div class="eyebrow" style="color:#e1b967">MeeSaan Gifting</div><h2>Celebrate Every Relationship. Gift Better.</h2><p>A thoughtfully curated celebration pack for festive gifting, corporate orders, employee appreciation, clients, events and special occasions.</p>
 <div class="offer"><del>MRP ₹820</del> <strong>₹550</strong> <span style="margin-left:8px">33% OFF • SAVE ₹270</span></div>
 <div class="actions"><button class="btn whatsapp" onclick="orderProduct('MeeSaan Celebration Pack',550)">Shop Celebration Pack</button><button class="btn outline" style="color:white;border-color:white" onclick="corporateOrder()">Corporate Enquiry</button></div></div>
-<img src="https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/celebration.png" alt="MeeSaan Celebration Pack"></div></div></section>
+<img src="assets/celebration.png" alt="MeeSaan Celebration Pack"></div></div></section>
 
 <section><div class="container"><div class="section-head"><div class="eyebrow">Simple Ordering</div><h2>From Our Shelf to Your Door</h2></div><div class="steps">
 <div class="step"><span>01</span><h3>Browse</h3><p>Explore the MeeSaan flavours.</p></div>
@@ -105,40 +101,61 @@ footer{padding:45px 0;background:#21150f;color:#eee1d4}.footer-grid{display:flex
 
 <script>
 const WHATSAPP_NUMBER="918796628080";
+
+const WHATSAPP_NUMBER="918796628080";
 const products=[
-{name:"MeeSaan – Pink Salt for Kids",tag:"Gentle & Wholesome",img:"https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/pink-salt.png"},
-{name:"MeeSaan – Smoky BBQ",tag:"Smoky & Savoury",img:"https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/smoky-bbq.png"},
-{name:"MeeSaan – Pudhina Lime",tag:"Refreshing & Zesty",img:"https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/pudhina-lime.png"},
-{name:"MeeSaan – Peri Peri",tag:"Bold & Fiery",img:"https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/peri-peri.png"},
-{name:"MeeSaan – Cream & Onion",tag:"Creamy & Savoury",img:"https://raw.githubusercontent.com/Avnisharma17/meesaan-website/main/cream-onion.png"}
+  {name:"MeeSaan – Pink Salt for Kids",tag:"Gentle & Wholesome",slug:"pink-salt",images:['pink-salt-1.png', 'pink-salt-2.png', 'pink-salt-3.png', 'pink-salt-4.png', 'pink-salt-5.png', 'pink-salt-6.png']},
+  {name:"MeeSaan – Smoky BBQ",tag:"Smoky & Savoury",slug:"smoky-bbq",images:['smoky-bbq-1.png', 'smoky-bbq-2.png', 'smoky-bbq-3.jpeg', 'smoky-bbq-4.png', 'smoky-bbq-5.png']},
+  {name:"MeeSaan – Pudhina Lime",tag:"Refreshing & Zesty",slug:"pudhina-lime",images:['pudhina-lime-1.png', 'pudhina-lime-2.png', 'pudhina-lime-3.png', 'pudhina-lime-4.png', 'pudhina-lime-5.png']},
+  {name:"MeeSaan – Peri Peri",tag:"Bold & Fiery",slug:"peri-peri",images:['peri-peri-1.png', 'peri-peri-2.png', 'peri-peri-3.png', 'peri-peri-4.png']},
+  {name:"MeeSaan – Cream & Onion",tag:"Creamy & Savoury",slug:"cream-onion",images:['cream-onion-1.png', 'cream-onion-2.png', 'cream-onion-3.png', 'cream-onion-4.png', 'cream-onion-5.png']}
 ];
+
 function wa(message){window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(message),"_blank")}
 function orderProduct(name,price){wa(`Hi MeeSaan! I would like to order:\nProduct: ${name}\nQuantity: 1\nPrice: ₹${price}\nPlease share the payment and delivery details.`)}
 function orderGeneral(){wa("Hi MeeSaan! I would like to know more about your products and place an order.")}
 function corporateOrder(){wa("Hi MeeSaan! I am interested in a Celebration Pack / corporate gifting order. Please share the bulk order and custom branding details.")}
-document.getElementById("productGrid").innerHTML=products.map((p,i)=>`
-<article class="product"><div class="product-media"><img src="${p.img}" alt="${p.name}"></div><div class="product-body">
-<span class="tag">${p.tag}</span><h3>${p.name}</h3><p>Premium pearl makhana • 70G</p>
-<div class="price"><span class="mrp">₹279</span><span class="sp">₹180</span><span class="discount">36% OFF</span></div>
-<p style="font-size:12px;margin-top:6px">Save ₹99</p><button class="btn whatsapp" onclick="orderProduct('${p.name}',180)">Order Now</button></div></article>`).join("");
 
-let currentProductSlide = 0;
-function updateProductSlider(){
-  const slider=document.getElementById("productGrid");
-  const dots=document.getElementById("productDots");
-  if(!slider) return;
-  const cards=slider.querySelectorAll(".product");
-  if(!cards.length) return;
-  currentProductSlide=(currentProductSlide+cards.length)%cards.length;
-  slider.style.transform=`translateX(-${currentProductSlide*100}%)`;
-  dots.innerHTML=Array.from(cards,(_,i)=>
-    `<button class="slider-dot ${i===currentProductSlide?"active":""}" onclick="goToProduct(${i})" aria-label="Product ${i+1}"></button>`
-  ).join("");
+document.getElementById("productGrid").innerHTML=products.map(p=>`
+<article class="product">
+  <div class="product-gallery" id="gallery-${p.slug}">
+    <div class="gallery-track">
+      ${p.images.map((img,i)=>`<img class="gallery-image ${i===0?"active":""}" src="assets/${img}" alt="${p.name} image ${i+1}" loading="${i===0?"eager":"lazy"}>`).join("")}
+    </div>
+    <button class="gallery-arrow gallery-prev" type="button" aria-label="Previous image" onclick="moveGallery('${p.slug}',-1)">‹</button>
+    <button class="gallery-arrow gallery-next" type="button" aria-label="Next image" onclick="moveGallery('${p.slug}',1)">›</button>
+    <div class="gallery-dots">${p.images.map((_,i)=>`<button class="gallery-dot ${i===0?"active":""}" type="button" aria-label="Image ${i+1}" onclick="goGallery('${p.slug}',${i})"></button>`).join("")}</div>
+  </div>
+  <div class="product-body">
+    <span class="tag">${p.tag}</span><h3>${p.name}</h3><p>Premium pearl makhana • 70G</p>
+    <div class="price"><span class="mrp">₹279</span><span class="sp">₹180</span><span class="discount">36% OFF</span></div>
+    <p style="font-size:12px;margin-top:6px">Save ₹99</p>
+    <button class="btn whatsapp" onclick="orderProduct('${p.name}',180)">Order Now</button>
+  </div>
+</article>`).join("");
+
+const galleryState={};
+products.forEach(p=>galleryState[p.slug]=0);
+function renderGallery(slug){
+  const box=document.getElementById("gallery-"+slug); if(!box)return;
+  const images=box.querySelectorAll(".gallery-image"), dots=box.querySelectorAll(".gallery-dot"), index=galleryState[slug]||0;
+  images.forEach((img,i)=>img.classList.toggle("active",i===index));
+  dots.forEach((dot,i)=>dot.classList.toggle("active",i===index));
 }
-function moveProduct(direction){currentProductSlide+=direction;updateProductSlider();}
-function goToProduct(index){currentProductSlide=index;updateProductSlider();}
-setTimeout(updateProductSlider,100);
+function moveGallery(slug,direction){
+  const box=document.getElementById("gallery-"+slug), total=box?box.querySelectorAll(".gallery-image").length:0;
+  if(!total)return; galleryState[slug]=(galleryState[slug]+direction+total)%total; renderGallery(slug);
+}
+function goGallery(slug,index){galleryState[slug]=index;renderGallery(slug);}
 
+document.querySelectorAll(".product-gallery").forEach(box=>{
+  let startX=0;
+  box.addEventListener("touchstart",e=>{startX=e.touches[0].clientX},{passive:true});
+  box.addEventListener("touchend",e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    if(Math.abs(dx)>40) moveGallery(box.id.replace("gallery-",""),dx<0?1:-1);
+  },{passive:true});
+});
 </script>
 </body>
 </html>
